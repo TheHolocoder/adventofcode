@@ -9,9 +9,11 @@ export async function runSolution(solution: (data: string[]) => any) {
 }
 
 export async function readData() {
-  const [_, fullPath, dataSet] = process.argv as
-    | [string, string, string]
-    | [string, string];
+  const [_, fullPath, ...args] = process.argv;
+
+  const dataSetArg = args.find((arg) => arg.startsWith('--data='));
+  const dataSet = dataSetArg ? dataSetArg.split('=')[1] : undefined;
+
   const puzzle = fullPath.split('/').slice(-2).join('/');
   const [day, part] = puzzle
     .split('/')
@@ -20,8 +22,6 @@ export async function readData() {
   const data = (await readFile(fileName)).toString().split('\n');
   return data;
 }
-
 function createFileName(day: number, part: 'a' | 'b', dataSet?: string) {
   return join(`day-${day}`, `${part}.data${dataSet ? `.${dataSet}` : ''}.txt`);
 }
-
